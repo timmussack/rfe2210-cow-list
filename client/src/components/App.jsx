@@ -2,33 +2,42 @@ import React from 'react';
 //import * from 'react'; --> DON'T USE, WILL BREAK IT.
 import CowList from './CowList.jsx'
 import AddCow from './AddCow.jsx'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const testData = [
-  {
-    name: 'Brownie',
-    description: 'This cow is weighs 1400 pounds and is brown. She is 4 years old. Her favorite hobby is eating green grass.',
-    id: 1
-  },
-  {
-    name: 'Big Horns',
-    description: 'This cow is weighs 1800 pounds and is black. He is 8 years old. His favorite hobby is resting in the pasture.',
-    id: 2
-  },
-  {
-    name: 'Bessie',
-    description: 'This cow is weighs 900 pounds and is white with black spots. She is 2 years old. Her favorite hobby is jumping the fence.',
-    id: 3
-  }
-]
-
-let cowId = 0;
+// const testData = [
+//   {
+//     name: 'Brownie',
+//     description: 'This cow is weighs 1400 pounds and is brown. She is 4 years old. Her favorite hobby is eating green grass.',
+//     id: 1
+//   },
+//   {
+//     name: 'Big Horns',
+//     description: 'This cow is weighs 1800 pounds and is black. He is 8 years old. His favorite hobby is resting in the pasture.',
+//     id: 2
+//   },
+//   {
+//     name: 'Bessie',
+//     description: 'This cow is weighs 900 pounds and is white with black spots. She is 2 years old. Her favorite hobby is jumping the fence.',
+//     id: 3
+//   }
+// ]
 
 const App = () => {
-const [cows, setCows] = useState(testData)
+const [cows, setCows] = useState([])
 const [popName, setPopName] = useState('');
 const [popDes, setPopDes] = useState('');
+
+useEffect(()=> {
+  axios.get('/cows')
+    .then((response) => {
+      console.log('From the server', response.data);
+    })
+    .catch((error) => {
+      console.log('Error from axios get', error)
+    })
+}, []);
+
 
 const handleCowClick = (name, description) => {
   console.log(name, description)
@@ -38,12 +47,10 @@ const handleCowClick = (name, description) => {
 }
 
 const handleAddCow = (name, description) => {
-  cowId++;
   console.log(name, description)
-  axios.post('/', {
+  axios.post('/cows', {
     name: name,
     description: description,
-    id: cowId
   })
   .then((res) => {
     //run setCows after we get a saved response
